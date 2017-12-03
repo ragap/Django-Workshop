@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block main %}
+
+         <div class="">
+           <br>
+           <br>
+         </div>
+
+          <div id="content">
+          </div>
+
+          <script type="text/javascript">
+          // $('#content').html('<h3>Fuelwatch</h3>')
+
+            $.get('/mithrildata/',function(json){
+                  searchdata= JSON.parse(list_data)
+                   m.redraw();
+                  })
+
+            var Filter = {
+                          view: function(){
+                            return m('div.form-group.col-sm-40 col-form-label',
+                                    m('form#myform',
+                                    m("table.table-sm",
+                                    m('tr', m('td', {label :'Product',},"Product"),
+                                    m('td',m('input.style1[name=Product][value=1]'))),
+                                    m('br'),
+                                    m('tr', m('td', {label :'Metroregion' ,},"Metroregion"),
+                                    m('td',m('input.style1[name=Metroregion][value=24]'))),),
+                                    m('br'),
+                                    m("button.btn btn-lg btn-primary", {onclick: function(){'True'}},"Submit"),
+                                  ))}}
+
+
+            var table = {view: function(){
+                           return m("table",[m("tr", [
+                                            m("th","Price"),
+                                            m("th","Location"),
+                                            m("th","Address"),
+                                            m("th","Phone"),
+                                            m("th","Brand"),
+                                            m("th", "Date"),
+                                            ])
+                                            // m("tbody", [
+                                            //   map(function(searchdata) {
+                                            //     return m("tr", [
+                                            //       m("td", col(this.tableState, 'Price'), searchdata.name),
+                                            //       m("td", col(this.tableState, 'Location'), searchdata.lastname),
+                                            //       m("td", col(this.tableState, 'Address'), searchdata.job)
+                                            //     ]) }) ])
+                             ]) }}
+
+            m.mount(document.getElementById('content'), Filter,table,
+                   )
+          </script>
+
+
+
+    {% endblock %}
