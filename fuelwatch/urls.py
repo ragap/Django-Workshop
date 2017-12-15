@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', index),
     url(r'^json/$', jsondata),
-    url(r'^mithril/', mithrildata),
+    url(r'^mithril/', mithrildata,name = 'mithrildata' ),
 ]

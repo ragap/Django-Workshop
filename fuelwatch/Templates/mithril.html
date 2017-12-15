@@ -6,52 +6,112 @@
            <br>
          </div>
 
-          <div id="content">
-          </div>
+         <div id="myfilter"></div>
+         <div id="mytable"></div>
 
-          <script type="text/javascript">
-          // $('#content').html('<h3>Fuelwatch</h3>')
 
-            $.get('/mithrildata/',function(json){
-                  searchdata= JSON.parse(list_data)
-                   m.redraw();
-                  })
+        <script type="text/javascript">
+          var data = [];
+          var listdata = [];
+          var newdata = [];
 
-            var Filter = {
-                          view: function(){
-                            return m('div.form-group.col-sm-40 col-form-label',
-                                    m('form#myform',
-                                    m("table.table-sm",
-                                    m('tr', m('td', {label :'Product',},"Product"),
-                                    m('td',m('input.style1[name=Product][value=1]'))),
-                                    m('br'),
-                                    m('tr', m('td', {label :'Metroregion' ,},"Metroregion"),
-                                    m('td',m('input.style1[name=Metroregion][value=24]'))),),
-                                    m('br'),
-                                    m("button.btn btn-lg btn-primary", {onclick: function(){'True'}},"Submit"),
-                                  ))}}
+          filter = {
+                    view: function()
+                   {
+                     return m('div.form-group.col-sm-40 col-form-label',
+                            m('form#myform',
+                            {onsubmit: function(e)
+                                {e.preventDefault();
+                                   var url = '{% url 'mithrildata'  %}' + '?' + $("#myform").serialize();
+                                   // console.log('url' : url);
+                                   $.get(url, function(json)
+                                          {
+                                            console.log('json',json)
+                                            listdata = json
+                                            Filterprice = 130 ;
+                                            console.log('Filterprice',Filterprice)
+                                            newdata = listdata.filter(
+                                                                      function(item)
+                                                                      {
+                                                                      //return true
+                                                                      return item.Price <= Filterprice;
+                                                                      }
+                                                                     );
+
+
+                                            console.log('newdata',newdata)
+                                            m.redraw();
+                                          }
+                                        );
+                                }
+                             },
+                            m("table.table-sm",
+                                m('tr',
+                                  m('td', {label :'Product',},"Product"),
+                                  m('td',m('input.style1[name=Product]'))
+                                ),
+                                m('br'),
+                                m('tr',
+                                  m('td', {label :'Metroregion' ,},"Metroregion"),
+                                  m('td',m('input.style1[name=Metroregion]'))
+                                ),
+                                m('br'),
+                                m("button.btn btn-lg btn-primary", {onclick: function(){}},"Submit"),
+                                // m('br'),
+                                // m('tr',
+                                //   m('td', {label :'Filter Price' ,},"Filter Price"),
+                                //   m('td',m('input.style1[name=Filterprice]'))
+                                // ),
+                               m("button.btn btn-lg btn-primary",
+                                    {onclick: function(Filterprice)
+                                      {
+                                        newdata = listdata.filter(
+                                                                  (Filterprice) => listdata.map((i) => i.Price <= Filterprice )
+                                                                );
+                                        console.log(newdata)
+                                      }
+                                    },"Filter"),
+                        )))
+
+                }
+            };
 
 
             var table = {view: function(){
-                           return m("table",[m("tr", [
-                                            m("th","Price"),
-                                            m("th","Location"),
-                                            m("th","Address"),
-                                            m("th","Phone"),
-                                            m("th","Brand"),
-                                            m("th", "Date"),
-                                            ])
-                                            // m("tbody", [
-                                            //   map(function(searchdata) {
-                                            //     return m("tr", [
-                                            //       m("td", col(this.tableState, 'Price'), searchdata.name),
-                                            //       m("td", col(this.tableState, 'Location'), searchdata.lastname),
-                                            //       m("td", col(this.tableState, 'Address'), searchdata.job)
-                                            //     ]) }) ])
-                             ]) }}
+                           //return m('h1', "Hi")
 
-            m.mount(document.getElementById('content'), Filter,table,
-                   )
+                           console.log('listdata', listdata)
+                           return m("table.table.table-striped",
+                                  m ('thead',m("tr",
+                                             m("th","Price"),
+                                             m("th","Location"),
+                                             m("th","Address"),
+                                             m("th","Phone"),
+                                             m("th","Brand"),
+                                             m("th", "Date"),
+                                           )),
+                                m("tbody",listdata.map(i=> m("tr",
+                                                   m("td",  i.Price),
+                                                    m("td",  i.Location),
+                                                    m("td",  i.Address),
+                                                    m("td",  i.Phone),
+                                                    m("td",  i.Brand),
+                                                    m("td",  i.Date),)
+                                                                 )
+                                                               ))
+                                                             }}
+
+
+// return m('b', listdata.map(function(data) {
+//   console.log('data',data);
+//   return data.Price
+// }))
+
+
+             m.mount(document.getElementById('myfilter'), filter);
+             m.mount(document.getElementById('mytable'), table);
+
+
           </script>
 
 
