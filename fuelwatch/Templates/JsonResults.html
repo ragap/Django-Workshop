@@ -1,40 +1,119 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Welcome to fuelapp</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script
-          src="https://code.jquery.com/jquery-3.2.1.min.js"
-          integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-          crossorigin="anonymous"></script>
-  </head>
-  <body>
-      <h2>Fuel Prices</h2>
-    <form class="search" action="index.html" method="post">
-        <input type="text" name="Product" value="1">
-        <input type="text" name="Region" value="25">
-        <button type="button" name="Get"></button>
-    </form>
+{% extends "base.html" %}
+{% block main %}
+
+         <div class="">
+           <br>
+           <br>
+         </div>
+
+         <div id="myfilter"></div>
+         <div id="mytable"></div>
+
+
+        <script type="text/javascript">
+          var data = [];
+          var listdata = [];
+          var newdata = [];
+
+          filter = {
+                      view: function()
+                   {
+                     return m('div.form-group.col-sm-40 col-form-label',
+                            m('form#myform',
+                            {onsubmit: function(e)
+                                {e.preventDefault();
+                                   var url = '{% url 'mithrildata'  %}' + '?' + $("#myform").serialize();
+                                   console.log('url' , url);
+                                   $.get(url, function(json)
+                                          {
+                                            console.log('json',json)
+                                            listdata = json
+                                            Filterprice = 130 ;
+                                            console.log('Filterprice',Filterprice)
+                                            newdata = listdata.filter(
+                                                                      function(item)
+                                                                      {
+                                                                       //return true
+                                                                      return item.Price <= Filterprice;
+                                                                      }
+                                                                     );
+
+
+                                            console.log('newdata',newdata)
+                                            m.redraw();
+                                          }
+                                        );
+                                }
+                             },
+                            m("table.table-sm",
+                                m('tr',
+                                  m('td', {label :'Product',},"Product"),
+                                  m('td',m('input.style1[name=Product]'))
+                                ),
+                                m('br'),
+                                m('tr',
+                                  m('td', {label :'Metroregion' ,},"Metroregion"),
+                                  m('td',m('input.style1[name=Metroregion]'))
+                                ),
+                                m('br'),
+                                m("button.btn btn-lg btn-primary", {onclick: function(){}},"Submit"),
+                                // m('br'),
+                                // m('tr',
+                                //   m('td', {label :'Filter Price' ,},"Filter Price"),
+                                //   m('td',m('input.style1[name=Filterprice]'))
+                                // ),
+                               m("button.btn btn-lg btn-primary",
+                                    {onclick: function(Filterprice)
+                                      {
+                                        newdata = listdata.filter(
+                                                                  (Filterprice) => listdata.map((i) => i.Price <= Filterprice )
+                                                                );
+                                        console.log(newdata)
+                                      }
+                                    },"Filter"),
+                        )))
+
+                }
+            };
+
+
+            var table = {view: function(){
+                           //return m('h1', "Hi")
+
+                           console.log('listdata', listdata)
+                           return m("table.table.table-striped",
+                                  m ('thead',m("tr",
+                                             m("th","Price"),
+                                             m("th","Location"),
+                                             m("th","Address"),
+                                             m("th","Phone"),
+                                             m("th","Brand"),
+                                             m("th", "Date"),
+                                           )),
+                                m("tbody",listdata.map(i=> m("tr",
+                                                   m("td",  i.Price),
+                                                    m("td",  i.Location),
+                                                    m("td",  i.Address),
+                                                    m("td",  i.Phone),
+                                                    m("td",  i.Brand),
+                                                    m("td",  i.Date),)
+                                                                 )
+                                                               ))
+                                                             }}
+
+
+// return m('b', listdata.map(function(data) {
+//   console.log('data',data);
+//   return data.Price
+// }))
+
+
+             m.mount(document.getElementById('myfilter'), filter);
+             m.mount(document.getElementById('mytable'), table);
+
+
+          </script>
 
 
 
-  <div id="content">
-    <script type="text/javascript">
-         $.get('/jsondata/',function(list_data){
-             $('#content').html(list_data)
-             $("#content").html(   <h2>"HEllo World"</h2)
-         })
-
-
-
-   </script>
-
-
-  </div>
-
-
-
-</body>
+    {% endblock %}

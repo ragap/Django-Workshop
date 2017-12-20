@@ -1,119 +1,104 @@
 {% extends "base.html" %}
 {% block main %}
 
-         <div class="">
-           <br>
-           <br>
-         </div>
-
-         <div id="myfilter"></div>
-         <div id="mytable"></div>
+ <div class="container">
+    <br>
+ </div>
+ <div id="myfilter"></div>
 
 
-        <script type="text/javascript">
-          var data = [];
-          var listdata = [];
-          var newdata = [];
+ <script type="text/javascript">
 
-          filter = {
+    var fuelwatch_data = [];
+
+    var filter = {
+                     // Render HTML for Search functionality
                     view: function()
-                   {
-                     return m('div.form-group.col-sm-40 col-form-label',
-                            m('form#myform',
-                            {onsubmit: function(e)
-                                {e.preventDefault();
-                                   var url = '{% url 'mithrildata'  %}' + '?' + $("#myform").serialize();
-                                   // console.log('url' : url);
-                                   $.get(url, function(json)
-                                          {
-                                            console.log('json',json)
-                                            listdata = json
-                                            Filterprice = 130 ;
-                                            console.log('Filterprice',Filterprice)
-                                            newdata = listdata.filter(
-                                                                      function(item)
-                                                                      {
-                                                                      //return true
-                                                                      return item.Price <= Filterprice;
-                                                                      }
-                                                                     );
-
-
-                                            console.log('newdata',newdata)
-                                            m.redraw();
-                                          }
-                                        );
-                                }
-                             },
-                            m("table.table-sm",
-                                m('tr',
-                                  m('td', {label :'Product',},"Product"),
-                                  m('td',m('input.style1[name=Product]'))
-                                ),
+                    {
+                    return m("main",
+                          [
+                            m("div",{class:"container"},),
+                            m("h4[style=color:#1f2328]",{ class: "text-muted"},"Search Fuel Price"),
+                            m("br"),
+                            m('div.form-group.col-sm-40 col-form-label',
+                              m("form",{id:"myform"},
+                              m("table.table-lg",
+                                m('tr',    // Enter Product value
+                                  m("div",{class:"form-group"},),
+                                    m('td', {label :'Product',style:'font-weight: bold',},"Product"),
+                                    m('td',m("input",{type:"text", name :"product_input",class:"form-control",placeholder:"Product name"})),
+                                ),//table row
+                                m('br'),
+                                m('tr', // Enter Metro  value
+                                  m("div",{class:"form-group"},),
+                                    m('td', {label :'Metroregion',style:'font-weight: bold',},"Metro Region"),
+                                    m('td',m("input",{type:"text", name:"region_input", class:"form-control",placeholder:"Metro Region name"})),
+                                ),//table row
                                 m('br'),
                                 m('tr',
-                                  m('td', {label :'Metroregion' ,},"Metroregion"),
-                                  m('td',m('input.style1[name=Metroregion]'))
-                                ),
-                                m('br'),
-                                m("button.btn btn-lg btn-primary", {onclick: function(){}},"Submit"),
-                                // m('br'),
-                                // m('tr',
-                                //   m('td', {label :'Filter Price' ,},"Filter Price"),
-                                //   m('td',m('input.style1[name=Filterprice]'))
-                                // ),
-                               m("button.btn btn-lg btn-primary",
-                                    {onclick: function(Filterprice)
-                                      {
-                                        newdata = listdata.filter(
-                                                                  (Filterprice) => listdata.map((i) => i.Price <= Filterprice )
-                                                                );
-                                        console.log(newdata)
-                                      }
-                                    },"Filter"),
-                        )))
+                                  m("div",{class:"form-check"},),
+                                    m('td', {label :'Tommorrow',class:"form-check-label",},"Tomorrow"),
+                                    m('td',m("input",{type:"checkbox", name:"Tomorrow", class:"form-check-input",id:"Tommorrow",})),
+                                  ),//table row
+                              ),//table
+                              m("br"),
+                              m("br"),
+                              m("button", {type:"submit",class:"btn btn-primary",onclick:searchdata},"Submit"),
+                              ' ',
+                              ' ',
+                              m("button", {type:"submit",class:"btn btn-primary",onclick:filterdata}, "Filter"),
+                              )//myform
+                            ),//form division
+                          m("table.table.table-striped",
+                            m ("thead.thead-dark",
+                                m("tr",
+                                    m("th","Price"),
+                                    m("th","Location"),
+                                    m("th","Address"),
+                                    m("th","Phone"),
+                                    m("th","Brand"),
+                                    m("th", "Date"),
+                                  )
+                              ),
+                            m("tbody",fuelwatch_data.map(i=> m("tr",
+                                m("td",  i.Price),
+                                    m("td",  i.Location),
+                                    m("td",  i.Address),
+                                    m("td",  i.Phone),
+                                    m("td",  i.Brand),
+                                    m("td",  i.Date),)
+                                  )
+                              )                              
+                          ),//table.table.table-striped
+                        ]
+                        )// view component main
+                    },//mitrril view function
+                  };//main
 
-                }
-            };
+    function searchdata()
+     {
+      var url = '{% url 'mithrildata' %}' + '?' + $("#myform").serialize();
+      console.log(url);
+      $.get(url, function(json)
+            {
+              fuelwatch_data = json;
+              console.log('sd',fuelwatch_data)
+              // m.redraw();  {# Refresh all Mithril content #}
+            }
+          );
+       // }
+      }
 
+    function filterdata()
+     {
+          console.log ("filterdata",fuelwatch_data)
+      }
 
-            var table = {view: function(){
-                           //return m('h1', "Hi")
-
-                           console.log('listdata', listdata)
-                           return m("table.table.table-striped",
-                                  m ('thead',m("tr",
-                                             m("th","Price"),
-                                             m("th","Location"),
-                                             m("th","Address"),
-                                             m("th","Phone"),
-                                             m("th","Brand"),
-                                             m("th", "Date"),
-                                           )),
-                                m("tbody",listdata.map(i=> m("tr",
-                                                   m("td",  i.Price),
-                                                    m("td",  i.Location),
-                                                    m("td",  i.Address),
-                                                    m("td",  i.Phone),
-                                                    m("td",  i.Brand),
-                                                    m("td",  i.Date),)
-                                                                 )
-                                                               ))
-                                                             }}
-
-
-// return m('b', listdata.map(function(data) {
-//   console.log('data',data);
-//   return data.Price
-// }))
-
-
-             m.mount(document.getElementById('myfilter'), filter);
-             m.mount(document.getElementById('mytable'), table);
-
-
-          </script>
+    // m.mount is used to activate mithril component and enable autodraw
+    //m.mount or m.route ??
+    m.mount(document.getElementById('myfilter'), filter);
 
 
 
-    {% endblock %}
+  </script>
+  {% endblock %}

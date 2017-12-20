@@ -20,6 +20,6 @@ from fuelwatch.views import index,jsondata,mithrildata
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', index),
-    url(r'^json/$', jsondata),
+    url(r'^json/$', jsondata,name = 'jsondata'),
     url(r'^mithril/', mithrildata,name = 'mithrildata' ),
 ]

@@ -12,16 +12,19 @@ def index(request):
     return render(request,"search.html")
 
 def jsondata(request):
-    # if request.GET:
-    #     url,list_data=get_data(request.GET.get('Product'),request.GET.get('Metroregion'),request.GET.get('Tomorrow'))
-    #     return JsonResponse(list_data, safe=False)
-    return JsonResponse({"abd":1}, safe=False)
-
-def mithrildata(request):
     if request.GET:
         print(request.GET.get('Product'))
         print(request.GET.get('Metroregion'))
         url,list_data=get_data(request.GET.get('Product'),request.GET.get('Metroregion'),request.GET.get('Tomorrow'))
+        return JsonResponse(list_data, safe=False)
+    return render(request,"JsonResults.html")
+
+def mithrildata(request):
+    print("inside dajngo")
+    if request.GET:
+        print(request.GET.get('product_input'))
+        print(request.GET.get('region_input'))
+        url,list_data=get_data(request.GET.get('product_input'),request.GET.get('region_input'),request.GET.get('Tomorrow'))
         return JsonResponse(list_data, safe=False)
     return render(request,"mithril.html")
 
