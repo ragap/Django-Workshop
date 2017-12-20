@@ -10,6 +10,7 @@
  <script type="text/javascript">
 
     var fuelwatch_data = [];
+    var filter_data =[];
 
     var filter = {
                      // Render HTML for Search functionality
@@ -46,7 +47,7 @@
                               m("button", {type:"submit",class:"btn btn-primary",onclick:searchdata},"Submit"),
                               ' ',
                               ' ',
-                              m("button", {type:"submit",class:"btn btn-primary",onclick:filterdata}, "Filter"),
+                              m("button", {type:"submit",class:"btn btn-primary",id:"filter_btn",value:"disable",onclick:filterdata}, "Filter"),
                               )//myform
                             ),//form division
                           m("table.table.table-striped",
@@ -68,30 +69,62 @@
                                     m("td",  i.Brand),
                                     m("td",  i.Date),)
                                   )
-                              )                              
+                              )
+
                           ),//table.table.table-striped
                         ]
                         )// view component main
                     },//mitrril view function
                   };//main
 
-    function searchdata()
+
+    $( document).ready(function()
+    {
+      $('#filter_btn').attr('disabled', 'disabled');
+    });
+
+
+
+    function searchdata(e)
      {
-      var url = '{% url 'mithrildata' %}' + '?' + $("#myform").serialize();
-      console.log(url);
-      $.get(url, function(json)
+        //preventDefault to prevent browser to use/redirect new url
+         event.preventDefault();
+         var url = '{% url 'mithrildata' %}' + '?' + $("#myform").serialize();
+         console.log(url);
+
+         $.get(url, function(json)
             {
               fuelwatch_data = json;
               console.log('sd',fuelwatch_data)
               // m.redraw();  {# Refresh all Mithril content #}
             }
-          );
-       // }
-      }
+            );
 
-    function filterdata()
+          if (fuelwatch_data)
+          {
+            $("#filter_btn").removeAttr("disabled");
+            console.log('Filter is enabled')
+          }
+      } //searchdata
+
+    function filterdata(e)
      {
-          console.log ("filterdata",fuelwatch_data)
+          event.preventDefault();
+          
+          Filterprice = 130 ;
+          console.log('Filterprice',Filterprice)
+          filter_data = fuelwatch_data.filter(
+                                    function(item)
+                                    {
+                                     //return true
+                                    return item.Price <= Filterprice;
+                                    }
+                                   );
+
+          fuelwatch_data = filter_data;
+          console.log('filter_data',filter_data)
+          m.redraw();
+
       }
 
     // m.mount is used to activate mithril component and enable autodraw
