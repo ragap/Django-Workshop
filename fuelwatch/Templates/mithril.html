@@ -11,12 +11,28 @@
 
     var fuelwatch_data = [];
     var filter_data =[];
+    // State of the Button defaulted to false.
+    var btnStatus = { isSubmitting :false};
+    var price_low = [];
+    var price_high = [];
+    var data = [];
 
     var filter = {
-                     // Render HTML for Search functionality
-                    view: function()
+                    view: function(vnode)
                     {
-                    return m("main",
+                      //Filter button Attributes
+                      var BtnAttr = {
+                             type:"submit"
+                            ,class:"btn btn-primary"
+                            ,id:"filter_btn"
+                            ,onclick : filterdata
+                          }
+                          if (!btnStatus.isSubmitting){
+                            //if button status is flase then disbale filter button
+                              BtnAttr.disabled = true;
+                            }
+                      // Render HTML for Search functionality
+                      return m("main",
                           [
                             m("div",{class:"container"},),
                             m("h4[style=color:#1f2328]",{ class: "text-muted"},"Search Fuel Price"),
@@ -27,7 +43,7 @@
                                 m('tr',    // Enter Product value
                                   m("div",{class:"form-group"},),
                                     m('td', {label :'Product',style:'font-weight: bold',},"Product"),
-                                    m('td',m("input",{type:"text", name :"product_input",class:"form-control",placeholder:"Product name"})),
+                                    m('td',m("input",{type:"text", id:"id_product",name :"product_input",class:"form-control",value:"1",placeholder:"Product name"})),
                                 ),//table row
                                 m('br'),
                                 m('tr', // Enter Metro  value
@@ -47,7 +63,39 @@
                               m("button", {type:"submit",class:"btn btn-primary",onclick:searchdata},"Submit"),
                               ' ',
                               ' ',
-                              m("button", {type:"submit",class:"btn btn-primary",id:"filter_btn",value:"disable",onclick:filterdata}, "Filter"),
+                              m("input",
+                                  {
+                                    type:"text",
+                                    id:"price_low",
+                                    class:"form-control",
+                                    placeholder:"Lower price range",
+                                    // oncreate: function(vnode)
+                                    //           {
+                                    //           console.log("vnode:", vnode.dom);
+                                    //           // vnode.state.pricelow ;
+                                    //           // console.log('pricelow',price_low);
+                                    //           },
+                                    oninput :  function(e)
+                                      {
+                                       price_low = e.target.value;
+                                       console.log('pricelow',price_low)
+                                      }
+                                  },
+                               ),
+                              m("br"),
+                              m("input",
+                                      {
+                                        type:"text",
+                                        id:"price_high",
+                                        class:"form-control",
+                                        placeholder:"Higher price range",
+                                        oninput :  function(e)
+                                          {
+                                           price_high = e.target.value;
+                                           console.log('pricelow',price_high)
+                                          }
+                                      }),
+                              m("button",BtnAttr, "Filter"),
                               )//myform
                             ),//form division
                           m("table.table.table-striped",
@@ -61,7 +109,7 @@
                                     m("th", "Date"),
                                   )
                               ),
-                            m("tbody",fuelwatch_data.map(i=> m("tr",
+                            m("tbody",data.map(i=> m("tr",
                                 m("td",  i.Price),
                                     m("td",  i.Location),
                                     m("td",  i.Address),
@@ -78,50 +126,40 @@
                   };//main
 
 
-    $( document).ready(function()
-    {
-      $('#filter_btn').attr('disabled', 'disabled');
-    });
-
-
-
     function searchdata(e)
      {
         //preventDefault to prevent browser to use/redirect new url
          event.preventDefault();
          var url = '{% url 'mithrildata' %}' + '?' + $("#myform").serialize();
-         console.log(url);
+         // console.log(url);
+
+         btnStatus.isSubmitting= true;
 
          $.get(url, function(json)
             {
               fuelwatch_data = json;
-              console.log('sd',fuelwatch_data)
-              // m.redraw();  {# Refresh all Mithril content #}
+              data = fuelwatch_data;
+              // console.log('sd',fuelwatch_data)
+              // console.log(btnStatus)
+              m.redraw();  {# Refresh all Mithril content #}
             }
             );
-
-          if (fuelwatch_data)
-          {
-            $("#filter_btn").removeAttr("disabled");
-            console.log('Filter is enabled')
-          }
       } //searchdata
 
-    function filterdata(e)
-     {
-          event.preventDefault();
-          
-          Filterprice = 130 ;
-          console.log('Filterprice',Filterprice)
+      function filterdata(e)
+       {
+         event.preventDefault();
+          // console.log('Price',price_high1);
+
           filter_data = fuelwatch_data.filter(
                                     function(item)
                                     {
                                      //return true
-                                    return item.Price <= Filterprice;
+                                    return (item.Price >= price_low && item.Price <= price_high);
                                     }
                                    );
 
-          fuelwatch_data = filter_data;
+          data = filter_data;
           console.log('filter_data',filter_data)
           m.redraw();
 
