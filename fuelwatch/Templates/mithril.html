@@ -10,39 +10,20 @@
  <script type="text/javascript">
 
     var fuelwatch_data = [];
-    var filter_data =[];
-    // State of the Button defaulted to false.
-    var btnStatus = { isSubmitting :false};
-    var price_low = [];
-    var price_high = [];
-    var data = [];
+    var slider_lowval = 124;
+    var slider_highval = 125;
 
     var filter = {
                     view: function(vnode)
                     {
-                      //Filter button Attributes
-                      var BtnAttr = {
-                             type:"submit"
-                            ,class:"btn btn-primary"
-                            ,id:"filter_btn"
-                            ,onclick : filterdata
-                          }
-                          if (!btnStatus.isSubmitting){
-                            //if button status is flase then disbale filter button
-                              BtnAttr.disabled = true;
-                            }
-                    // filter data by id_slider
-                    filter_data = fuelwatch_data.filter(
-                                                  function(item)
-                                                  {
-                                                   //return true
-                                                  return (item.Price >= price_low && item.Price <= price_high);
+                       // filter data by id_slider
+                      var data = fuelwatch_data.filter(function(item){
+                                                   //return filtered data between slider value range
+                                                  return (item.Price >= slider_lowval && item.Price <= slider_highval);
+                                                  console.log('data',data)
                                                   }
                                                  );
-
-                        data = filter_data;
                       // Render HTML for Search functionality
-
                       return m("main",
                           [
                             m("div",{class:"container"},),
@@ -64,7 +45,7 @@
                                 ),//table row
                                 m('br'),
                                 m('tr',
-                                  m("div",{class:"form-check"},),
+                                  m("div",{class:"form-check"},),//check box for Tomorrow
                                     m('td', {label :'Tommorrow',class:"form-check-label",},"Tomorrow"),
                                     m('td',m("input",{type:"checkbox", name:"Tomorrow", class:"form-check-input",id:"Tommorrow",})),
                                   ),//table row
@@ -72,62 +53,25 @@
                               m("br"),
                               m("br"),
                               m("button", {type:"submit",class:"btn btn-primary",onclick:searchdata},"Submit"),
-                              ' ',
-                              ' ',
-                              m("input",
-                                  {
-                                    type:"text",
-                                    id:"price_low",
-                                    class:"form-control",
-                                    placeholder:"Lower price range",
-                                    // oncreate: function(vnode)
-                                    //           {
-                                    //           console.log("vnode:", vnode.dom);
-                                    //           // vnode.state.pricelow ;
-                                    //           // console.log('pricelow',price_low);
-                                    //           },
-                                    oninput :  function(e)
-                                      {
-                                       price_low = e.target.value;
-                                       console.log('pricelow',price_low)
-                                      }
-                                  },
-                               ),
                               m("br"),
-                              m("input",
-                                      {
-                                        type:"text",
-                                        id:"price_high",
-                                        class:"form-control",
-                                        placeholder:"Higher price range",
-                                        oninput :  function(e)
-                                          {
-                                           price_high = e.target.value;
-                                           console.log('pricelow',price_high)
-                                          }
-                                      }),
-                              m("button",BtnAttr, "Filter"),
-                              //slider
-                              m("div",
-                                { oncreate: function(vnode_local)
-                                  {
-                                    var myslider = vnode_local.dom; // This is the same as doing ’document.getElementById(‘id_slider’);
-                                    console.log(myslider)
-                                    noUiSlider.create(myslider,
-                                       {
-                                         start: [125, 130],
+                              m("br"),
+                              // non ui slider which will be created with default values at Mithril "oncreate" node event
+                              m("div",{ id:"id_myslider",
+                                  oncreate: function(vnode_local){
+                                    // This is the same as doing ’document.getElementById(‘id_slider’) to get the element by id and change it;
+                                    var myslider = vnode_local.dom;
+                                    //slider will be created with default parameters
+                                    noUiSlider.create(myslider,{
+                                         start: [130, 150],
                                          connect: [true, true, true],
                                          tooltips: [ true, true ],
-                                         range: { 'min': 120,
-                                                  'max': 150
-                                                }
+                                         range: { 'min': 119,'max': 190}
                                         });
-
-                                    myslider.noUiSlider.on('update', function (value)
-                                    {
+                                    //
+                                    myslider.noUiSlider.on('update', function (value){
                                       // Assign slider values to the state variables we use to track the price range to filter on
-                                      price_low = value[0];
-                                      price_high = value[1];
+                                      slider_lowval = value[0];
+                                      slider_highval = value[1];
                                      // Now that the state variables have been updated, get mithril to redraw the component
                                      m.redraw();
                                     });
@@ -148,7 +92,7 @@
                                   )
                               ),
                             m("tbody",data.map(i=> m("tr",
-                                m("td",  i.Price),
+                                    m("td",  i.Price),
                                     m("td",  i.Location),
                                     m("td",  i.Address),
                                     m("td",  i.Phone),
@@ -156,7 +100,6 @@
                                     m("td",  i.Date),)
                                   )
                               )
-
                           ),//table.table.table-striped
                         ]
                         )// view component main
@@ -164,44 +107,41 @@
                   };//main
 
 
-    function searchdata(e)
-     {
+    function searchdata(e){
         //preventDefault to prevent browser to use/redirect new url
          event.preventDefault();
          var url = '{% url 'mithrildata' %}' + '?' + $("#myform").serialize();
-         // console.log(url);
+         console.log(url);
 
-         btnStatus.isSubmitting= true;
-
-         $.get(url, function(json)
-            {
+         //get will pass the request to views.py
+         $.get(url, function(json){
               fuelwatch_data = json;
-              data = fuelwatch_data;
-              // console.log('sd',fuelwatch_data)
-              // console.log(btnStatus)
+              console.log('fd',fuelwatch_data)
+              var price= fuelwatch_data.map(function(i){return i.Price});
+              var sl_minrange = Math.min(...price);
+              var sl_maxrange = Math.max(...price);
+
+              if (price.length > 0){
+                var sl_stvalue = sl_minrange + 1;
+                console.log('sm',sl_minrange,sl_stvalue)
+                var sl_endvalue = sl_maxrange - 5;
+                console.log('sm2',sl_maxrange,sl_endvalue)
+              }
+
+              x= document.getElementById('id_myslider')
+              x.noUiSlider.updateOptions({
+                  start :[sl_stvalue,sl_endvalue],
+                  range: {
+                        min: sl_minrange,
+                        max: sl_maxrange
+                        }
+                        }, true);
+
+
               m.redraw();  {# Refresh all Mithril content #}
             }
             );
       } //searchdata
-
-      function filterdata(e)
-       {
-         event.preventDefault();
-          // console.log('Price',price_high1);
-
-          filter_data = fuelwatch_data.filter(
-                                    function(item)
-                                    {
-                                     //return true
-                                    return (item.Price >= price_low && item.Price <= price_high);
-                                    }
-                                   );
-
-          data = filter_data;
-          console.log('filter_data',filter_data)
-          m.redraw();
-
-      }
 
     // m.mount is used to activate mithril component and enable autodraw
     //m.mount or m.route ??
