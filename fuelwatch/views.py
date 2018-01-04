@@ -4,27 +4,14 @@ import feedparser
 import itertools
 
 
-def index(request):
-    if request.GET:
-        url,list_data=get_data(request.GET.get('Product'),request.GET.get('Metroregion'),request.GET.get('Tomorrow'))
-        # return render(request,'results.html',{'url':url,'list_data' :list_data})
-        return JsonResponse(list_data, safe=False)
-    return render(request,"search.html")
-
-def jsondata(request):
-    if request.GET:
-        print(request.GET.get('Product'))
-        print(request.GET.get('Metroregion'))
-        url,list_data=get_data(request.GET.get('Product'),request.GET.get('Metroregion'),request.GET.get('Tomorrow'))
-        return JsonResponse(list_data, safe=False)
-    return render(request,"JsonResults.html")
-
 def mithrildata(request):
     print("inside dajngo")
     if request.GET:
-        print(request.GET.get('product_input'))
-        print(request.GET.get('region_input'))
-        url,list_data=get_data(request.GET.get('product_input'),request.GET.get('region_input'),request.GET.get('Tomorrow'))
+        print(request.GET.getlist('Product'))
+        print(request.GET.getlist('Metroregion'))
+        print(request.GET.get('Tomorrow'))
+        # get list to get the arguments in Array form
+        url,list_data=get_data(request.GET.getlist('Product'),request.GET.getlist('Metroregion'),request.GET.get('Tomorrow'))
         return JsonResponse(list_data, safe=False)
     return render(request,"mithril.html")
 
@@ -59,11 +46,12 @@ def get_data(Product,Metroregion,Tomorrow):
 
 def generate_url(Product,Region,Tomorrow):
      link = []
-     for i  in itertools.product(Product,Region):
+     for i  in itertools.product(*Product,*Region):
          print('GEnurl',Product,Region)
          gen_url = ("http://www.fuelwatch.wa.gov.au/fuelwatch/fuelWatchRSS?Product={}&Region={}".format(*i))
          link.append(gen_url)
          if Tomorrow:
              gen_url = ("http://www.fuelwatch.wa.gov.au/fuelwatch/fuelWatchRSS?Product={}&Region={}&Day=tomorrow".format(*i))
              link.append(gen_url)
+             print('djangourl',link)
      return (link)

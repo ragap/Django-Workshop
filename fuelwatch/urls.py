@@ -15,11 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from fuelwatch.views import index,jsondata,mithrildata
+from fuelwatch.views import mithrildata
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', index),
-    url(r'^json/$', jsondata,name = 'jsondata'),
+    # url(r'^$', index),
     url(r'^mithril/', mithrildata,name = 'mithrildata' ),
 ]
