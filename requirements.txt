@@ -1,0 +1,16 @@
+click==6.7
+Django==1.10.6
+django-debug-toolbar==1.8
+django-filter==1.0.4
+django-multiselectfield==0.1.7
+django-simple-search==1.0.2
+feedparser==5.2.1
+Flask==0.12.2
+itsdangerous==0.24
+Jinja2==2.10
+lxml==4.0.0
+MarkupSafe==1.0
+sqlparse==0.2.3
+virtualenv==15.1.0
+Werkzeug==0.12.2
+xlwt==1.2.0
