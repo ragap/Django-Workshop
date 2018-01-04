@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block main %}
 
+<style media="screen">
+.pad {padding:10px;}
+</style>
+
  <div class="container">
     <br>
  </div>
@@ -26,28 +30,33 @@
                       // Render HTML for Search functionality
                       return m("main",
                           [
-                            m("div",{class:"container"},),
+                            m("div",{class:"container-fluid"},),
                             m("h4[style=color:#1f2328]",{ class: "text-muted"},"Search Fuel Price"),
                             m("br"),
                             m('div.form-group.col-sm-40 col-form-label',
                               m("form",{id:"myform"},
                               m("table.table-lg",
                                 m('tr',    // Enter Product value
-                                  m("div",{class:"form-group"},),
-                                    m('td', {label :'Product',style:'font-weight: bold',},"Product"),
-                                    m('td',m("input",{type:"text", id:"id_product",name :"product_input",class:"form-control",value:"1",placeholder:"Product name"})),
+                                    m('td.pad', {label :'Product',style:'font-weight: bold',},"Product"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"1",id:"Unleaded Petrol"}),"Unleaded Petrol"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"2",id:"Premium Unleaded"}),"Premium Unleaded"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"4",id:"Diesel"}),"Diesel"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"5",id:"LPG"}),"LPG"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"6",id:"98 RON"}),"98 RON"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"7",id:"B20 diesel"}),"B20 diesel"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"8",id:"E10"}),"E10"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"9",id:"P100"}),"P100"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"10",id:"E85"}),"E85"),
                                 ),//table row
-                                m('br'),
                                 m('tr', // Enter Metro  value
-                                  m("div",{class:"form-group"},),
-                                    m('td', {label :'Metroregion',style:'font-weight: bold',},"Metro Region"),
-                                    m('td',m("input",{type:"text", name:"region_input", class:"form-control",placeholder:"Metro Region name"})),
+                                    m('td.pad', {label :'Metroregion',style:'font-weight: bold',},"Metro Region"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"25",id:"North of River"}),"North of River"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"26",id:"Premium Unleaded"}),"South of River"),
+                                    m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"27",id:"Diesel"}),"East/Hills"),
                                 ),//table row
-                                m('br'),
                                 m('tr',
-                                  m("div",{class:"form-check"},),//check box for Tomorrow
-                                    m('td', {label :'Tommorrow',class:"form-check-label",},"Tomorrow"),
-                                    m('td',m("input",{type:"checkbox", name:"Tomorrow", class:"form-check-input",id:"Tommorrow",})),
+                                    m('td.pad', {label :'Tommorrow',class:"form-check-label",style:'font-weight: bold',},"Tomorrow"),
+                                    m('td.pad',m("input",{type:"checkbox", name:"Tomorrow", class:"form-check-input",id:"Tommorrow",})),
                                   ),//table row
                               ),//table
                               m("br"),
@@ -127,6 +136,8 @@
                 var sl_endvalue = sl_maxrange - 5;
                 console.log('sm2',sl_maxrange,sl_endvalue)
               }
+
+              //need to handle exception
 
               x= document.getElementById('id_myslider')
               x.noUiSlider.updateOptions({
