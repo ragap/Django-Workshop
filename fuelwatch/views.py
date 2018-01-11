@@ -7,10 +7,10 @@ import itertools
 def mithrildata(request):
     print("inside dajngo")
     if request.GET:
-        print(request.GET.getlist('Product'))
-        print(request.GET.getlist('Metroregion'))
-        print(request.GET.get('Tomorrow'))
-        # get list to get the arguments in Array form
+        # print(request.GET.getlist('Product'))
+        # print(request.GET.getlist('Metroregion'))
+        # print(request.GET.get('Tomorrow'))
+        # getlist  is to get the arguments in Array form
         url,list_data=get_data(request.GET.getlist('Product'),request.GET.getlist('Metroregion'),request.GET.get('Tomorrow'))
         return JsonResponse(list_data, safe=False)
     return render(request,"mithril.html")
@@ -45,6 +45,7 @@ def get_data(Product,Metroregion,Tomorrow):
      return url,list_data
 
 def generate_url(Product,Region,Tomorrow):
+    # list to store the url's generated
      link = []
      for i  in itertools.product(*Product,*Region):
          print('GEnurl',Product,Region)

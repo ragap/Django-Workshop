@@ -2,13 +2,14 @@
 {% block main %}
 
 <style media="screen">
-.pad {padding:10px;}
+  .pad {padding:10px;}
+  .disptable{display:none;}
 </style>
 
  <div class="container">
     <br>
  </div>
- <div id="myfilter"></div>
+ <div id="fueldata"></div>
 
 
  <script type="text/javascript">
@@ -36,8 +37,9 @@
                             m('div.form-group.col-sm-40 col-form-label',
                               m("form",{id:"myform"},
                               m("table.table-lg",
-                                m('tr',    // Enter Product value
+                                m('tr',    // Multi check box for Product
                                     m('td.pad', {label :'Product',style:'font-weight: bold',},"Product"),
+                                    //name and value
                                     m('td.pad',m("input",{type :"checkbox", name:"Product", value:"1",id:"Unleaded Petrol"}),"Unleaded Petrol"),
                                     m('td.pad',m("input",{type :"checkbox", name:"Product", value:"2",id:"Premium Unleaded"}),"Premium Unleaded"),
                                     m('td.pad',m("input",{type :"checkbox", name:"Product", value:"4",id:"Diesel"}),"Diesel"),
@@ -47,9 +49,10 @@
                                     m('td.pad',m("input",{type :"checkbox", name:"Product", value:"8",id:"E10"}),"E10"),
                                     m('td.pad',m("input",{type :"checkbox", name:"Product", value:"9",id:"P100"}),"P100"),
                                     m('td.pad',m("input",{type :"checkbox", name:"Product", value:"10",id:"E85"}),"E85"),
-                                ),//table row
-                                m('tr', // Enter Metro  value
+                                ),//table row product
+                                m('tr', // Multi check box Metro  value
                                     m('td.pad', {label :'Metroregion',style:'font-weight: bold',},"Metro Region"),
+                                    //name and value
                                     m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"25",id:"North of River"}),"North of River"),
                                     m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"26",id:"Premium Unleaded"}),"South of River"),
                                     m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"27",id:"Diesel"}),"East/Hills"),
@@ -90,7 +93,7 @@
                               )//myform
                             ),//form division
                           m("table.table.table-striped",
-                            m ("thead.thead-dark",
+                            m ("thead.thead-dark.disptable",
                                 m("tr",
                                     m("th","Price"),
                                     m("th","Location"),
@@ -98,6 +101,7 @@
                                     m("th","Phone"),
                                     m("th","Brand"),
                                     m("th", "Date"),
+                                    m("th", "Distance"),
                                   )
                               ),
                             m("tbody",data.map(i=> m("tr",
@@ -106,7 +110,8 @@
                                     m("td",  i.Address),
                                     m("td",  i.Phone),
                                     m("td",  i.Brand),
-                                    m("td",  i.Date),)
+                                    m("td",  i.Date),
+                                    m("td",  '10'),)
                                   )
                               )
                           ),//table.table.table-striped
@@ -119,6 +124,8 @@
     function searchdata(e){
         //preventDefault to prevent browser to use/redirect new url
          event.preventDefault();
+
+         // url will be generated with the parameters
          var url = '{% url 'mithrildata' %}' + '?' + $("#myform").serialize();
          console.log(url);
 
@@ -129,6 +136,8 @@
               var price= fuelwatch_data.map(function(i){return i.Price});
               var sl_minrange = Math.min(...price);
               var sl_maxrange = Math.max(...price);
+
+              $(".disptable").show();
 
               if (price.length > 0){
                 var sl_stvalue = sl_minrange + 1;
@@ -156,7 +165,7 @@
 
     // m.mount is used to activate mithril component and enable autodraw
     //m.mount or m.route ??
-    m.mount(document.getElementById('myfilter'), filter);
+    m.mount(document.getElementById('fueldata'), filter);
 
 
 
