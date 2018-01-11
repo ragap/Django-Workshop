@@ -2,8 +2,11 @@
 {% block main %}
 
 <style media="screen">
+   /* Add padding to display Product and Metro region checklist options   */
   .pad {padding:10px;}
+  /*Hide the header of display table while opening the page*/
   .disptable{display:none;}
+  .nodata{display:none;}
 </style>
 
  <div class="container">
@@ -40,22 +43,30 @@
                                 m('tr',    // Multi check box for Product
                                     m('td.pad', {label :'Product',style:'font-weight: bold',},"Product"),
                                     //name and value
-                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"1",id:"Unleaded Petrol"}),"Unleaded Petrol"),
-                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"2",id:"Premium Unleaded"}),"Premium Unleaded"),
-                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"4",id:"Diesel"}),"Diesel"),
-                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"5",id:"LPG"}),"LPG"),
-                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"6",id:"98 RON"}),"98 RON"),
-                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"7",id:"B20 diesel"}),"B20 diesel"),
-                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"8",id:"E10"}),"E10"),
-                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"9",id:"P100"}),"P100"),
-                                    m('td.pad',m("input",{type :"checkbox", name:"Product", value:"10",id:"E85"}),"E85"),
+                                    m('tr',
+                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"1",id:"Unleaded Petrol"}),"Unleaded Petrol"),
+                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"2",id:"Premium Unleaded"}),"Premium Unleaded"),
+                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"4",id:"Diesel"}),"Diesel"),
+                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"5",id:"LPG"}),"LPG"),
+                                    ),
+                                    m('tr',
+                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"6",id:"98 RON"}),"98 RON"),
+                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"7",id:"B20 diesel"}),"B20 diesel"),
+                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"8",id:"E10"}),"E10"),
+                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"9",id:"P100"}),"P100"),
+                                    ),
+                                    m('tr',
+                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"10",id:"E85"}),"E85"),
+                                    ),
                                 ),//table row product
                                 m('tr', // Multi check box Metro  value
                                     m('td.pad', {label :'Metroregion',style:'font-weight: bold',},"Metro Region"),
                                     //name and value
-                                    m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"25",id:"North of River"}),"North of River"),
-                                    m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"26",id:"Premium Unleaded"}),"South of River"),
-                                    m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"27",id:"Diesel"}),"East/Hills"),
+                                    m('tr',
+                                      m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"25",id:"North of River"}),"North of River"),
+                                      m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"26",id:"Premium Unleaded"}),"South of River"),
+                                      m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"27",id:"Diesel"}),"East/Hills"),
+                                    ),
                                 ),//table row
                                 m('tr',
                                     m('td.pad', {label :'Tommorrow',class:"form-check-label",style:'font-weight: bold',},"Tomorrow"),
@@ -115,6 +126,8 @@
                                   )
                               )
                           ),//table.table.table-striped
+                          //No data found
+                        m("h4.nodata[style=color:#1f2328]",{ class: "text-muted"},"** No Data Found, Please search with different values **"),
                         ]
                         )// view component main
                     },//mitrril view function
@@ -137,25 +150,30 @@
               var sl_minrange = Math.min(...price);
               var sl_maxrange = Math.max(...price);
 
-              $(".disptable").show();
 
-              if (price.length > 0){
+              if (price.length > 0)
+              {
+                // Diplay Table header when data exists
+                $(".disptable").show();
+                // calculate start and end vlaues for slider range
                 var sl_stvalue = sl_minrange + 1;
                 console.log('sm',sl_minrange,sl_stvalue)
                 var sl_endvalue = sl_maxrange - 5;
                 console.log('sm2',sl_maxrange,sl_endvalue)
+
+                x= document.getElementById('id_myslider')
+                x.noUiSlider.updateOptions({
+                      start :[sl_stvalue,sl_endvalue],
+                      range: {
+                              min: sl_minrange,
+                              max: sl_maxrange
+                            }
+                }, true);
+              } else {
+                //Display No data found
+                $(".nodata").show();
               }
 
-              //need to handle exception
-
-              x= document.getElementById('id_myslider')
-              x.noUiSlider.updateOptions({
-                  start :[sl_stvalue,sl_endvalue],
-                  range: {
-                        min: sl_minrange,
-                        max: sl_maxrange
-                        }
-                        }, true);
 
 
               m.redraw();  {# Refresh all Mithril content #}
