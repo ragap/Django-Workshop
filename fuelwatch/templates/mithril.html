@@ -1,13 +1,17 @@
 {% extends "base.html" %}
 {% block main %}
 
+
 <style media="screen">
    /* Add padding to display Product and Metro region checklist options   */
-  .pad {padding:10px;}
-  /*Hide the header of display table while opening the page*/
-  .disptable{display:none;}
-  .nodata{display:none;}
+   .pad {padding:10px;}
+
+   /*Hide the header of display table and no data exception while opening the page*/
+   .disptable{display:none;}
+   .nodata{display:none;}
+
 </style>
+
 
  <div class="container">
     <br>
@@ -18,142 +22,194 @@
  <script type="text/javascript">
 
     var fuelwatch_data = [];
-    var slider_lowval = 124;
-    var slider_highval = 125;
 
-    var filter = {
-                    view: function(vnode)
-                    {
-                       // filter data by id_slider
-                      var data = fuelwatch_data.filter(function(item){
-                                                   //return filtered data between slider value range
-                                                  return (item.Price >= slider_lowval && item.Price <= slider_highval);
-                                                  console.log('data',data)
-                                                  }
-                                                 );
-                      // Render HTML for Search functionality
-                      return m("main",
-                          [
-                            m("div",{class:"container-fluid"},),
-                            m("h4[style=color:#1f2328]",{ class: "text-muted"},"Search Fuel Price"),
-                            m("br"),
-                            m('div.form-group.col-sm-40 col-form-label',
-                              m("form",{id:"myform"},
-                              m("table.table-lg",
-                                m('tr',    // Multi check box for Product
-                                    m('td.pad', {label :'Product',style:'font-weight: bold',},"Product"),
-                                    //name and value
-                                    m('tr',
-                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"1",id:"Unleaded Petrol"}),"Unleaded Petrol"),
-                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"2",id:"Premium Unleaded"}),"Premium Unleaded"),
-                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"4",id:"Diesel"}),"Diesel"),
-                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"5",id:"LPG"}),"LPG"),
-                                    ),
-                                    m('tr',
-                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"6",id:"98 RON"}),"98 RON"),
-                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"7",id:"B20 diesel"}),"B20 diesel"),
-                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"8",id:"E10"}),"E10"),
-                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"9",id:"P100"}),"P100"),
-                                    ),
-                                    m('tr',
-                                      m('td.pad',m("input",{type :"checkbox", name:"Product", value:"10",id:"E85"}),"E85"),
-                                    ),
-                                ),//table row product
-                                m('tr', // Multi check box Metro  value
-                                    m('td.pad', {label :'Metroregion',style:'font-weight: bold',},"Metro Region"),
-                                    //name and value
-                                    m('tr',
-                                      m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"25",id:"North of River"}),"North of River"),
-                                      m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"26",id:"Premium Unleaded"}),"South of River"),
-                                      m('td.pad',m("input",{type :"checkbox", name:"Metroregion", value:"27",id:"Diesel"}),"East/Hills"),
-                                    ),
-                                ),//table row
-                                m('tr',
-                                    m('td.pad', {label :'Tommorrow',class:"form-check-label",style:'font-weight: bold',},"Tomorrow"),
-                                    m('td.pad',m("input",{type:"checkbox", name:"Tomorrow", class:"form-check-input",id:"Tommorrow",})),
-                                  ),//table row
-                              ),//table
-                              m("br"),
-                              m("br"),
-                              m("button", {type:"submit",class:"btn btn-primary",onclick:searchdata},"Submit"),
-                              m("br"),
-                              m("br"),
-                              // non ui slider which will be created with default values at Mithril "oncreate" node event
-                              m("div",{ id:"id_myslider",
-                                  oncreate: function(vnode_local){
-                                    // This is the same as doing ’document.getElementById(‘id_slider’) to get the element by id and change it;
-                                    var myslider = vnode_local.dom;
-                                    //slider will be created with default parameters
-                                    noUiSlider.create(myslider,{
-                                         start: [130, 150],
-                                         connect: [true, true, true],
-                                         tooltips: [ true, true ],
-                                         range: { 'min': 119,'max': 190}
-                                        });
-                                    //
-                                    myslider.noUiSlider.on('update', function (value){
-                                      // Assign slider values to the state variables we use to track the price range to filter on
-                                      slider_lowval = value[0];
-                                      slider_highval = value[1];
-                                     // Now that the state variables have been updated, get mithril to redraw the component
-                                     m.redraw();
-                                    });
-                                  }
-                                }
-                              ), //slider
-                              )//myform
-                            ),//form division
-                          m("table.table.table-striped",
-                            m ("thead.thead-dark.disptable",
-                                m("tr",
-                                    m("th","Price"),
-                                    m("th","Location"),
-                                    m("th","Address"),
-                                    m("th","Phone"),
-                                    m("th","Brand"),
-                                    m("th", "Date"),
-                                    m("th", "Distance"),
-                                  )
-                              ),
-                            m("tbody",data.map(i=> m("tr",
-                                    m("td",  i.Price),
-                                    m("td",  i.Location),
-                                    m("td",  i.Address),
-                                    m("td",  i.Phone),
-                                    m("td",  i.Brand),
-                                    m("td",  i.Date),
-                                    m("td",  '10'),)
-                                  )
-                              )
-                          ),//table.table.table-striped
-                          //No data found
-                        m("h4.nodata[style=color:#1f2328]",{ class: "text-muted"},"** No Data Found, Please search with different values **"),
-                        ]
-                        )// view component main
-                    },//mitrril view function
-                  };//main
+    function get_your_location(){
+      navigator.geolocation.getCurrentPosition(function(position) {
+           var pos = {
+             lat: position.coords.latitude,
+             lng: position.coords.longitude
+           };
+
+           return pos;
+    }
+
+    //Function to return values for multi check box
+    function getvalues(name){
+      //Product val and Metro region values for multi check box
+      productval = [ {value:"1",id:"Unleaded Petrol"},
+                     {value:"2",id:"Premium Unleaded"},
+                     {value:"4",id:"Diesel"},
+                     {value:"5",id:"LPG"},
+                     {value:"6",id:"98 RON"},
+                     {value:"7",id:"B20 diesel"},
+                     {value:"8",id:"E10"},
+                     {value:"9",id:"P100"},
+                     {value:"10",id:"E85"},
+                   ];
+
+      regionval =[ {value:"25",id:"North of River"},
+                   {value:"26",id:"South of River"},
+                   {value:"27",id:"East/Hills"},
+                 ];
+
+        console.log('3')
+      // generated by mithril component by iterating thru array using map method
+      if (name == "product"){
+        return productval.map(function({value,id}){
+          return m('td.pad',m("input",{type :"checkbox",
+                                       name :"Product",
+                                       value,
+                                       id}
+                                    ),id)
+        })
+      } else if (name == "region"){
+        return regionval.map(function({value,id}){
+          return m('td.pad',m("input",{type :"checkbox",
+                                       name :"Region",
+                                       value,
+                                       id}
+                                    ),id)
+        })
+      }
+    }
+
+    function slider(state){
+      // non ui slider which will be created with default values at Mithril "oncreate" node event
+      return m("div",{ id:"id_myslider",
+        oncreate: function(vnode){
+          // This is the same as doing ’document.getElementById(‘id_slider’) to get the element by id and change it;
+          var myslider = vnode.dom;
+          //slider will be created with default parameters
+          noUiSlider.create(myslider,{
+                     start: [130, 150],
+                     connect: [true, true, true],
+                     tooltips: [ true, true ],
+                     range: { 'min': 119,'max': 190}
+          });
+            console.log('4')
+          myslider.noUiSlider.on('slide',function(value){
+          // Assign slider values to the state variables we use to track the price range to filter on
+            state.slider_lowval = value[0];
+            state.slider_highval = value[1];
+              console.log('4-2',state.slider_lowval,state.slider_highval);
+          // Now that the state variables have been updated, get mithril to redraw the component
+          m.redraw();
+          });
+        },
+      }) //slider
+    }
+
+    function disptable(dispdata){
+      console.log('5','data in disp table',dispdata);
+      return m("table.table.table-striped",
+              m("thead.thead-dark.disptable",
+                // { onupdate: () => console.log("update thead") },
+                m("tr",
+                  m("th","Price"),
+                  m("th","Location"),
+                  m("th","Address"),
+                  m("th","Phone"),
+                  m("th","Brand"),
+                  m("th", "Date"),
+                  m("th", "Distance"),
+                )
+              ),
+              m("tbody",dispdata.map(i=> m("tr",
+                  m("td",  i.Price),
+                  m("td",  i.Location),
+                  m("td",  i.Address),
+                  m("td",  i.Phone),
+                  m("td",  i.Brand),
+                  m("td",  i.Date),
+                  m("td",  i.Distance),)
+                )
+              )
+            )//table
+    }
 
 
-    function searchdata(e){
-        //preventDefault to prevent browser to use/redirect new url
-         event.preventDefault();
+    // A Mithril component (fuleappdata) is an Object with a view function.
+    var fuleappdata = {
+      oninit: function(vnode){
+        // Assign default variables to slider var on Intialization of Mithril component
+        console.log('1')
+        vnode.state.slider_lowval = 124;
+        vnode.state.slider_highval = 175;
+      },
+      view:function(vnode){
+        //return filtered data of id_slider between slider value range
+        var data = fuelwatch_data.filter(function(item){
+          console.log('2',vnode.state.slider_lowval,vnode.state.slider_highval);
+          return (item.Price >= vnode.state.slider_lowval && item.Price <= vnode.state.slider_highval);
+        });
+
+        // Render HTML for Search functionality
+        return m("main",
+               m("div",{class:"container-fluid"},),
+               m("h4[style=color:#1f2328]",{ class: "text-muted"},"Search Fuel Price"),
+               m('div.form-group.col-sm-40 col-form-label',
+                m("form",{id:"myform"},
+                m("div",
+                m("table.table-lg",
+                  m('tr', // Multi check box for Product
+                      m('td.pad', {label :'Product',style:'font-weight: bold',},"Product"),
+                      getvalues('product')
+                  ),
+                  m('tr', // Multi check box Metro  value
+                      m('td.pad', {label :'Metroregion',style:'font-weight: bold',},"Metro Region"),
+                      getvalues('region')
+                  ),
+                  m('tr',
+                      m('td.pad', {label :'Tommorrow',class:"form-check-label",style:'font-weight: bold',},"Tomorrow"),
+                      m('td.pad',m("input",{type:"checkbox", name:"Tomorrow", class:"form-check-input",id:"Tommorrow",})),
+                  ),
+                ),
+                ),
+                m("div",
+                m("button", {
+                            type:"submit",
+                            class:"btn btn-primary",
+                            onclick: function(e){
+                                    //preventDefault to prevent browser to use/redirect new url
+                                    e.preventDefault();
+                                    searchdata()
+                                    },
+                            },
+                  "Submit"),
+                ),
+              )//myform
+            ),//form division
+            m("div",
+              slider(vnode.state),
+            ),
+            m("div",
+              disptable(data),
+            ),
+            m("div",
+              m("h4.nodata[style=color:#1f2328]",{ class: "text-muted"},"** No Data Found, Please search with different values **"),
+            ),
+        )// main
+      },//mitrril view function
+    };//Mithril Component (fuleappdata)
+
+
+    function searchdata(){
 
          // url will be generated with the parameters
          var url = '{% url 'mithrildata' %}' + '?' + $("#myform").serialize();
-         console.log(url);
+         console.log('7',url);
 
          //get will pass the request to views.py
          $.get(url, function(json){
               fuelwatch_data = json;
               console.log('fd',fuelwatch_data)
+
               var price= fuelwatch_data.map(function(i){return i.Price});
               var sl_minrange = Math.min(...price);
               var sl_maxrange = Math.max(...price);
 
-
-              if (price.length > 0)
-              {
-                // Diplay Table header when data exists
+              if (price.length > 0){
+                // Diplay results table header when data exists
                 $(".disptable").show();
                 // calculate start and end vlaues for slider range
                 var sl_stvalue = sl_minrange + 1;
@@ -173,17 +229,12 @@
                 //Display No data found
                 $(".nodata").show();
               }
-
-
-
               m.redraw();  {# Refresh all Mithril content #}
-            }
-            );
+          });
       } //searchdata
 
-    // m.mount is used to activate mithril component and enable autodraw
-    //m.mount or m.route ??
-    m.mount(document.getElementById('fueldata'), filter);
+    // m.mount is used to activate mithril component(fuleappdata) and enable autodraw
+    m.mount(document.getElementById('fueldata'), fuleappdata);
 
 
 
