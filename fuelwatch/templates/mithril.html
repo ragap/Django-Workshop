@@ -22,16 +22,19 @@
  <script type="text/javascript">
 
     var fuelwatch_data = [];
+    // var pos = {};
 
-    function get_your_location(){
-      navigator.geolocation.getCurrentPosition(function(position) {
-           var pos = {
-             lat: position.coords.latitude,
-             lng: position.coords.longitude
-           };
+    // console.log('position',pos);
 
-           return pos;
-    }
+    // function get_your_location(vnode){
+    //   navigator.geolocation.getCurrentPosition(function(position)
+    //   {
+    //       vnode.state.pos_lat = position.coords.latitude;
+    //       vnode.state.pos_lng = position.coords.longitude;
+    //
+    //       console.log('get_your_location',state.pos_lat,state.pos_lng);
+    //   })
+    // }
 
     //Function to return values for multi check box
     function getvalues(name){
@@ -91,7 +94,7 @@
           // Assign slider values to the state variables we use to track the price range to filter on
             state.slider_lowval = value[0];
             state.slider_highval = value[1];
-              console.log('4-2',state.slider_lowval,state.slider_highval);
+              // console.log('4-2',state.slider_lowval,state.slider_highval);
           // Now that the state variables have been updated, get mithril to redraw the component
           m.redraw();
           });
@@ -135,6 +138,8 @@
         console.log('1')
         vnode.state.slider_lowval = 124;
         vnode.state.slider_highval = 175;
+        vnode.state.pos_lat = 0;
+        vnode.state.pos_lng = 0;
       },
       view:function(vnode){
         //return filtered data of id_slider between slider value range
@@ -193,14 +198,19 @@
     };//Mithril Component (fuleappdata)
 
 
+    // get_your_location();
+    //
     function searchdata(){
 
+        // get_your_location();
+
+        console.log('searchdata_position',);
          // url will be generated with the parameters
          var url = '{% url 'mithrildata' %}' + '?' + $("#myform").serialize();
          console.log('7',url);
 
          //get will pass the request to views.py
-         $.get(url, function(json){
+         $.get(url,function(json){
               fuelwatch_data = json;
               console.log('fd',fuelwatch_data)
 
