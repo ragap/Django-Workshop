@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from fuelwatch.views import mithrildata
+from fuelwatch.views import mithrildata,testdata
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    # url(r'^$', index),
+    url(r'^test/',testdata,name = 'get_data' ),
     url(r'^mithril/', mithrildata,name = 'mithrildata' ),
 ]
