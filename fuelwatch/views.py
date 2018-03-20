@@ -96,7 +96,7 @@ def get_data(Product,Metroregion,Tomorrow,use_lat,use_lng):
                         'Date' : i.date,
                         'Latitude':i.latitude,
                         'Longitude':i.longitude,
-                        'Distance':distance,
+                        # 'Distance':distance,
                        }
 
             list_data.append(dic_data)
@@ -107,7 +107,7 @@ def generate_url(Product,Region,Tomorrow):
     # list to store the url's generated
      link = []
      for i  in itertools.product(*Product,*Region):
-         print('GEnurl',Product,Region)
+         # print('GEnurl',Product,Region)
          gen_url = ("http://www.fuelwatch.wa.gov.au/fuelwatch/fuelWatchRSS?Product={}&Region={}".format(*i))
          link.append(gen_url)
          if Tomorrow:
