@@ -1,15 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-import feedparser
-import itertools
-import requests
-import json
+import feedparser,itertools,requests,json,re
 # To cache the the data
 from django.core.cache import cache
 from fuelwatch.keys import DIST_KEY
-# reg exp
-import re
-
 
 def testdata(request):
     print("inside test")
@@ -24,12 +18,11 @@ def testdata(request):
 
 
 def mithrildata(request):
-    print("inside dajngo")
+    print("inside dajngo Mithril")
     if request.GET:
-        print(request.GET.getlist('Product'))
-        print(request.GET.getlist('Region'))
-        print(request.GET.get('Tomorrow'),request.GET.get('lat'),request.GET.get('lng'))
-
+        print(request.GET.getlist('Product'),request.GET.getlist('Region'),
+              request.GET.get('Tomorrow'),request.GET.get('lat')
+              ,request.GET.get('lng'))
 
         # getlist  is to get the arguments in Array form
         list_data=get_data(request.GET.getlist('Product'),
@@ -52,7 +45,6 @@ def getDistance(lat1,lng1,lat2,lng2):
                                'destinations':latlng2,
                                'key':DIST_KEY})
 
-    #print(x.url)
     data= json.loads(x.content)
     status = [data['status']]
 
@@ -74,9 +66,6 @@ def get_data(Product,Metroregion,Tomorrow,use_lat,use_lng):
      #Get the List of URL's to Parse
      url = generate_url([Product],[Metroregion],Tomorrow)
 
-     # lat1 = -32.0555
-     # lng1 = 115.8474
-
      #Parse the url's in list using feedparser
      for i in url:
         list_parse = feedparser.parse(i)
@@ -88,16 +77,15 @@ def get_data(Product,Metroregion,Tomorrow,use_lat,use_lng):
         # item elements are available in x.entries
         for i in list_parse.entries:
             #Call fn to replace extra char to space
-            address = get_safe_address(i.address)
-
-            distance =cache.get('latlng'+address);
-
-            if not distance:            
-                # cache the value
-                cal_dist = getDistance(use_lat,use_lng,i.latitude,i.longitude)
-                cache.set('latlng'+address,cal_dist)
-                distance = cal_dist;
-                print('elsedist',distance)
+            # address = get_safe_address(i.address)
+            #
+            # distance =cache.get('latlng'+address);
+            #
+            # if not distance:
+            #     cal_dist = getDistance(use_lat,use_lng,i.latitude,i.longitude)
+            #     cache.set('latlng'+address,cal_dist)
+            #     distance = cal_dist;
+            #     print('elsedist',distance)
 
             dic_data = {
                         'Price' : i.price,
